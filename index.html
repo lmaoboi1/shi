@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Get Live Gifts</title>
+    <!--
+      Loading Tailwind CSS for styling.
+    --><script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /*
+          Using the 'Inter' font.
+        */
+        body {
+            font-family: 'Inter', sans-serif;
+            /* Prevent vertical scroll on mobile */
+            overflow-y: hidden;
+            /* NEW: Prevent horizontal scroll on mobile */
+            overflow-x: hidden;
+            background-color: #fff; /* Ensure white background */
+            color: #111827; /* text-gray-900 */
+        }
+        
+        /*
+          This custom style ensures the main content area grows to fill
+          the entire viewport height (h-screen).
+        */
+        .h-main-screen {
+            height: 100vh; 
+        }
+
+        /* --- New Carousel Styles --- */
+        
+        /**
+         * 1. The Container
+         * - Sets up the 3D space with 'perspective'.
+         * - 'cursor: grab' indicates it's interactive.
+         * - '-webkit-tap-highlight-color' removes the gray flash on mobile tap.
+         */
+        .carousel-container {
+            width: 100%;
+            /* height: 220px; */ /* Let height be set by aspect ratio of items */
+            aspect-ratio: 16 / 9; /* Give it a responsive height */
+            max-height: 250px; /* Max height */
+            perspective: 1000px; /* This creates the 3D effect */
+            position: relative;
+            -webkit-tap-highlight-color: transparent; /* Disable tap flash */
+            cursor: grab; /* Show users it's draggable */
+            overflow: visible; /* Ensures side items are not clipped */
+            transition: opacity 0.5s ease-out;
+        }
+
+        /**
+         * 2. The Wheel
+         * - This is the rotating part that holds all the items.
+         * - 'transform-style: preserve-3d' tells it to respect 3D transforms.
+         * - 'transition' creates the smooth spinning animation.
+         */
+        .carousel-wheel {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            transform-style: preserve-3d;
+            /* A 'cubic-bezier' transition for a snappy, spring-like spin */
+            transition: transform 0.6s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+        }
+        
+        /**
+         * 3. The Items
+         * - 'position: absolute' so they can be placed in 3D space.
+         * - 'transition' allows them to smoothly change focus (scale, blur).
+         * - 'backface-visibility: hidden' prevents flickering during rotation.
+         */
+        .carousel-item {
+            position: absolute;
+            top: 0;
+            left: 50%; /* Centered horizontally, JS handles offset */
+            width: 50%; /* Items are 50% of container width */
+            max-width: 150px; /* Max width for items */
+            aspect-ratio: 1 / 1; /* Make items square */
+            
+            border-radius: 0.5rem; /* rounded-lg */
+            overflow: hidden; /* Keep image corners rounded */
+            
+            /* Transitions for all animated properties */
+            transition: transform 0.6s cubic-bezier(0.68, -0.55, 0.27, 1.55), 
+                        opacity 0.6s ease-in-out, 
+                        filter 0.6s ease-in-out;
+                        
+            -webkit-backface-visibility: hidden; /* Prevent flickering */
+            backface-visibility: hidden;
+        }
+
+        .carousel-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            /* Placeholder background color */
+            background-color: #e5e7eb; /* bg-gray-200 */
+            /* NEW: Filter to remove background */
+            filter: contrast(1.1) brightness(1.05) saturate(1.1);
+        }
+
+        /*
+          Custom button style to exactly match the image's color.
+        */
+        .btn-custom {
+            background-color: #ff005c; /* The exact color from your image */
+        }
+        .btn-custom:hover {
+            background-color: #e60053; /* A slightly darker shade for hover */
+        }
+        
+        /*
+          NEW: Confetti Canvas
+          - Sits on top of everything (z-50)
+          - 'pointer-events-none' so it doesn't block clicks
+        */
+        #confetti-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 50;
+            pointer-events: none;
+            visibility: hidden; /* Start hidden */
+            opacity: 0;
+            transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
+        }
+        
+        #confetti-canvas.show {
+            visibility: visible;
+            opacity: 1;
+        }
+        
+    </style>
+</head>
+<body class="bg-white text-gray-900">
+    
+    <!-- NEW: Confetti Canvas Element --><canvas id="confetti-canvas"></canvas>
+
+    <!--
+      Main container.
+      - Changed to h-main-screen (100vh) to fill the screen.
+      - NEW: 'justify-center' to group all content in the middle.
+      - NEW: 'gap-8' to add space between the grouped items.
+    --><main class="flex flex-col justify-center items-center w-full max-w-md mx-auto box-border h-main-screen gap-8 px-10">
+        
+        <!-- 
+          Top section for text and image
+          - This container now just holds the carousel and text.
+          - 'w-full' ensures it respects the padding from the main container.
+          - NEW: 'gap-4' to add space between carousel and text.
+        --><div class="flex flex-col items-center w-full justify-center gap-4">
+            
+            <!--
+              NEW 3D Carousel.
+            --><div class="carousel-container" role="region" aria-label="Image Carousel">
+                <div class="carousel-wheel">
+                    <!-- 9 most expensive gifts --><div class="carousel-item" role="group" aria-label="slide 1">
+                        <img src="https://p16-webcast.tiktokcdn.com/img/maliva/webcast-va/8f471afbcebfda3841a6cc515e381f58~tplv-obj.webp" alt="TikTok Universe" draggable="false" onerror="this.src='https://placehold.co/300x300/e5e7eb/777777?text=TikTok+Universe'">
+                    </div>
+                    <div class="carousel-item" role="group" aria-label="slide 2">
+                        <img src="https://p16-webcast.tiktokcdn.com/img/maliva/webcast-va/resource/f600a2495ab5d250e7da2066484a9383.png~tplv-obj.webp" alt="Pegasus" draggable="false" onerror="this.src='https://placehold.co/300x300/e5e7eb/777777?text=Pegasus'">
+                    </div>
+                    <div class="carousel-item" role="group" aria-label="slide 3">
+                        <img src="https://p16-webcast.tiktokcdn.com/img/alisg/webcast-sg/resource/27408e0429e288fc735e9f010da9fcf3.png~tplv-obj.webp" alt="Valerian's Oath" draggable="false" onerror="this.src='https://placehold.co/300x300/e5e7eb/777777?text=Valerian%27s+Oath'">
+                    </div>
+                    <div class="carousel-item" role="group" aria-label="slide 4">
+                        <img src="https://p16-webcast.tiktokcdn.com/img/alisg/webcast-sg/resource/3790b60a52697daa138bf8d0ec27242f.png~tplv-obj.webp" alt="King of Legends" draggable="false" onerror="this.src='https://placehold.co/300x300/e5e7eb/777777?text=King+of+Legends'">
+                    </div>
+                    <div class="carousel-item" role="group" aria-label="slide 5">
+                        <img src="https://p16-webcast.tiktokcdn.com/img/maliva/webcast-va/resource/bfb8425a7e8fa03f9fec05a973a4a506.png~tplv-obj.webp" alt="Fire Phoenix" draggable="false" onerror="this.src='https://placehold.co/300x300/e5e7eb/777777?text=Fire+Phoenix'">
+                    </div>
+                    <div class="carousel-item" role="group" aria-label="slide 6">
+                        <img src="https://p16-webcast.tiktokcdn.com/img/maliva/webcast-va/26f3fbcda383e6093a19b8e7351a164c~tplv-obj.webp" alt="Thunder Falcon" draggable="false" onerror="this.src='https://placehold.co/300x300/e5e7eb/777777?text=Thunder+Falcon'">
+                    </div>
+                    <div class="carousel-item" role="group" aria-label="slide 7">
+                        <img src="https://p16-webcast.tiktokcdn.com/img/maliva/webcast-va/b1667c891ed39fd68ba7252fff7a1e7c~tplv-obj.webp" alt="TikTok Stars" draggable="false" onerror="this.src='https://placehold.co/300x300/e5e7eb/777777?text=TikTok+Stars'">
+                    </div>
+                    <div class="carousel-item" role="group" aria-label="slide 8">
+                        <img src="https://p16-webcast.tiktokcdn.com/img/maliva/webcast-va/b13105782e8bf8fbefaa83b7af413cee~tplv-obj.webp" alt="TikTok Universe+" draggable="false" onerror="this.src='https://placehold.co/300x300/e5e7eb/777777?text=TikTok+Universe%2B'">
+                    </div>
+                    <div class="carousel-item" role="group" aria-label="slide 9">
+                        <img src="https://p16-webcast.tiktokcdn.com/img/maliva/webcast-va/a291aedacf27d22c3fd2d83575d2bee9~tplv-obj.webp" alt="Leon and Lion" draggable="false" onerror="this.src='https://placehold.co/300x300/e5e7eb/777777?text=Leon+and+Lion'">
+                    </div>
+                </div>
+            </div>
+            <!-- End of Carousel --><!--
+              Text content wrapper.
+              - Added ID 'text-content'
+            --><div id="text-content" class="w-full">
+                <!-- REDUCED: mb-2 (was mb-4) --><h1 class="text-3xl font-bold text-gray-900 mb-2 text-center">
+                    Get live Gifts
+                </h1>
+
+                <p class="text-base text-gray-600 text-center leading-relaxed">
+                    Go LIVE to start receiving Gifts from your viewers and get funded 
+                    through your content.
+                </p>
+            </div>
+        </div>
+        
+        <!--
+          Button Section
+          - No longer needs bottom padding, as it's part of the centered group.
+          - Added ID 'ok-button-wrapper' for animation.
+        --><div id="ok-button-wrapper" class="w-full transition-opacity duration-500 ease-out">
+            <button id="ok-button" class="w-full btn-custom text-white font-bold py-4 rounded-full text-lg uppercase tracking-wider shadow-md transition-colors">
+                OK
+            </button>
+        </div>
+        
+    </main>
+
+    <!--
+      Carousel and Confetti JavaScript
+    --><script type="module">
+        document.addEventListener('DOMContentLoaded', () => {
+            
+            // --- 1. Select Elements ---
+            const wheel = document.querySelector('.carousel-wheel');
+            const items = document.querySelectorAll('.carousel-item');
+            const container = document.querySelector('.carousel-container');
+            const okButton = document.getElementById('ok-button');
+            const buttonWrapper = document.getElementById('ok-button-wrapper');
+            // const textContent = document.getElementById('text-content'); // No longer needed for animation
+            const canvas = document.getElementById('confetti-canvas');
+            const ctx = canvas.getContext('2d');
+            
+            // Exit if essential elements are missing
+            if (!wheel || !container || items.length === 0 || !okButton || !canvas) {
+                console.warn('Carousel or button elements not found.');
+                return;
+            }
+
+            // --- 2. Define Parameters ---
+            const itemCount = items.length;
+            const angleIncrement = 360 / itemCount;
+            
+            let itemWidth = items[0].offsetWidth; 
+            if (itemWidth === 0) {
+                const containerWidth = container.offsetWidth;
+                itemWidth = containerWidth > 0 ? containerWidth * 0.5 : 150; 
+            }
+
+            let radius = (itemWidth / 2) / Math.tan(Math.PI / itemCount) * 1.5; 
+            
+            let currentRotation = 0; 
+            let activeIndex = 0;
+            let touchStartX = 0; 
+            let isMouseDown = false;
+            let isAnimating = false; // Prevents spamming button
+
+            // --- 3. Core Carousel Functions ---
+            
+            /**
+             * Positions all items on the 3D wheel and updates their focus style.
+             */
+            function updateCarouselStyles() {
+                const rawIndex = Math.round(-currentRotation / angleIncrement);
+                activeIndex = (rawIndex % itemCount + itemCount) % itemCount;
+
+                items.forEach((item, i) => {
+                    const baseTransform = `translateX(-50%) rotateY(${i * angleIncrement}deg) translateZ(${radius}px)`;
+                    
+                    let diff = activeIndex - i;
+                    if (Math.abs(diff) > itemCount / 2) {
+                        diff = diff > 0 ? diff - itemCount : diff + itemCount;
+                    }
+                    const distance = Math.abs(diff);
+                    
+                    let scale, opacity, blur, zIndex;
+                    
+                    switch (distance) {
+                        case 0: // Center item
+                            scale = 1;
+                            opacity = 1;
+                            blur = '0px';
+                            zIndex = 10;
+                            break;
+                        case 1: // Items 1 away (left/right)
+                            scale = 0.8;
+                            opacity = 0.7;
+                            blur = '2px';
+                            zIndex = 5;
+                            break;
+                        case 2: // Items 2 away
+                            scale = 0.6;
+                            opacity = 0.5;
+                            blur = '4px';
+                            zIndex = 2;
+                            break;
+                        default: // All other items
+                            scale = 0.5;
+                            opacity = 0; 
+                            blur = '6px';
+                            zIndex = 1;
+                    }
+                    
+                    // Don't apply styles if celebration is active
+                    if (isAnimating) {
+                        // During animation, only apply fade-out to non-active items
+                        if (i !== activeIndex) {
+                            item.style.opacity = '0';
+                        }
+                        return; // Skip other style updates
+                    }
+
+                    item.style.transform = `${baseTransform} scale(${scale})`;
+                    item.style.opacity = opacity;
+                    item.style.filter = `blur(${blur})`;
+                    item.style.zIndex = zIndex;
+                    item.setAttribute('aria-hidden', distance !== 0);
+                });
+            }
+
+            /**
+             * Rotates the entire wheel by one increment.
+             */
+            function rotateWheel(direction) {
+                if (isAnimating) return; // Disable rotation during animation
+                currentRotation += direction * angleIncrement;
+                wheel.style.transform = `translateZ(-${radius}px) rotateY(${currentRotation}deg)`;
+                updateCarouselStyles();
+            }
+
+            // --- 4. Carousel Event Handlers (for swipe and drag) ---
+            
+            function onDragStart(clientX) {
+                if (isAnimating) return;
+                isMouseDown = true;
+                touchStartX = clientX;
+                container.style.cursor = 'grabbing'; 
+            }
+            
+            function onDragEnd(clientX) {
+                if (isAnimating || !isMouseDown) return;
+                isMouseDown = false;
+                container.style.cursor = 'grab'; 
+
+                const deltaX = clientX - touchStartX;
+                const swipeThreshold = 50; 
+
+                if (Math.abs(deltaX) > swipeThreshold) {
+                    rotateWheel(deltaX < 0 ? 1 : -1); 
+                }
+                touchStartX = 0; 
+            }
+
+            // Mobile Touch Events
+            container.addEventListener('touchstart', (e) => onDragStart(e.touches[0].clientX), { passive: true });
+            container.addEventListener('touchend', (e) => onDragEnd(e.changedTouches[0].clientX), { passive: true });
+            
+            // Desktop Mouse Events
+            container.addEventListener('mousedown', (e) => onDragStart(e.clientX));
+            container.addEventListener('mouseup', (e) => onDragEnd(e.clientX));
+            container.addEventListener('mouseleave', () => {
+                if (isMouseDown) {
+                    isMouseDown = false;
+                    container.style.cursor = 'grab';
+                    touchStartX = 0;
+                }
+            });
+            container.addEventListener('mousemove', (e) => {
+                if (isMouseDown) {
+                    e.preventDefault(); 
+                }
+            });
+
+            // --- 5. Carousel Resize Handler ---
+            
+            function handleResize() {
+                // Resize canvas
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+
+                if (isAnimating) return; // Don't recalculate wheel if celebrating
+                
+                itemWidth = items[0].offsetWidth;
+                if (itemWidth === 0) {
+                     const containerWidth = container.offsetWidth;
+                     itemWidth = containerWidth > 0 ? containerWidth * 0.5 : 150;
+                }
+                radius = (itemWidth / 2) / Math.tan(Math.PI / itemCount) * 1.5;
+                
+                wheel.style.transform = `translateZ(-${radius}px) rotateY(${currentRotation}deg)`;
+                
+                items.forEach((item, i) => {
+                    const baseTransform = `translateX(-50%) rotateY(${i * angleIncrement}deg) translateZ(${radius}px)`;
+                    
+                    let diff = activeIndex - i;
+                    if (Math.abs(diff) > itemCount / 2) {
+                        diff = diff > 0 ? diff - itemCount : diff + itemCount;
+                    }
+                    const distance = Math.abs(diff);
+                    
+                    let scale;
+                    switch (distance) {
+                        case 0: scale = 1; break;
+                        case 1: scale = 0.8; break;
+                        case 2: scale = 0.6; break;
+                        default: scale = 0.5;
+                    }
+                    item.style.transform = `${baseTransform} scale(${scale})`;
+                });
+            }
+            
+            let resizeTimer;
+            window.addEventListener('resize', () => {
+                clearTimeout(resizeTimer);
+                resizeTimer = setTimeout(handleResize, 100); 
+            });
+            
+            // --- 6. NEW: Celebration and Confetti Logic ---
+
+            let particles = [];
+            const colors = ["#ff005c", "#ffca28", "#1e88e5", "#43a047", "#8e24aa", "#f4511e"];
+            let animationFrameId = null;
+            let confettiStreamActive = false;
+
+            function Particle(x, y, dx, dy, size, color) {
+                this.x = x;
+                this.y = y;
+                this.dx = dx;
+                this.dy = dy;
+                this.size = size;
+                this.color = color;
+                this.life = 120; // Particle lifespan (frames)
+                this.opacity = 1;
+
+                this.draw = function() {
+                    ctx.beginPath();
+                    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2, false);
+                    ctx.fillStyle = this.color;
+                    ctx.globalAlpha = this.opacity;
+                    ctx.fill();
+                    ctx.globalAlpha = 1.0;
+                };
+
+                this.update = function() {
+                    this.x += this.dx;
+                    this.y += this.dy;
+                    this.dy += 0.1; // Gravity
+                    this.life -= 1;
+                    
+                    // Fade out in the last 30 frames
+                    if (this.life < 30) {
+                        this.opacity = this.life / 30;
+                    }
+                    
+                    this.draw();
+                };
+            }
+
+            /**
+             * Creates a new batch of 10 particles from all directions.
+             */
+            function spawnParticles() {
+                for (let i = 0; i < 10; i++) {
+                    const size = Math.random() * 5 + 2;
+                    const color = colors[Math.floor(Math.random() * colors.length)];
+                    let x, y, dx, dy;
+                    
+                    const side = Math.floor(Math.random() * 4);
+                    switch(side) {
+                        case 0: // Top
+                            x = Math.random() * canvas.width;
+                            y = -size;
+                            dx = Math.random() * 4 - 2;
+                            dy = Math.random() * 3 + 1;
+                            break;
+                        case 1: // Right
+                            x = canvas.width + size;
+                            y = Math.random() * canvas.height;
+                            dx = -Math.random() * 3 - 1;
+                            dy = Math.random() * 4 - 2;
+                            break;
+                        case 2: // Bottom
+                            x = Math.random() * canvas.width;
+                            y = canvas.height + size;
+                            dx = Math.random() * 4 - 2;
+                            dy = -Math.random() * 3 - 1;
+                            break;
+                        case 3: // Left
+                            x = -size;
+                            y = Math.random() * canvas.height;
+                            dx = Math.random() * 3 + 1;
+                            dy = Math.random() * 4 - 2;
+                            break;
+                    }
+                    
+                    particles.push(new Particle(x, y, dx, dy, size, color));
+                }
+            }
+
+            /**
+             * The main animation loop for the confetti.
+             */
+            function animateConfetti() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                
+                // Spawn new particles if the stream is active
+                if (confettiStreamActive) {
+                    spawnParticles();
+                }
+                
+                let stillAlive = false;
+                
+                // Update and draw all particles
+                particles = particles.filter(particle => {
+                    if (particle.life > 0) {
+                        particle.update();
+                        stillAlive = true;
+                        return true;
+                    }
+                    return false;
+                });
+                
+                // Keep animating if particles exist or stream is active
+                if (stillAlive || confettiStreamActive) {
+                    animationFrameId = requestAnimationFrame(animateConfetti);
+                } else {
+                    canvas.classList.remove('show'); // Hide canvas when done
+                    animationFrameId = null;
+                }
+            }
+            
+            /**
+             * Starts the 5-second confetti stream.
+             */
+            function startConfettiStream() {
+                if (animationFrameId) {
+                    cancelAnimationFrame(animationFrameId);
+                }
+                particles = []; // Clear old particles
+                confettiStreamActive = true;
+                canvas.classList.add('show');
+                
+                animateConfetti(); // Start the loop
+                
+                // Stop spawning new particles after 5 seconds
+                setTimeout(() => {
+                    confettiStreamActive = false;
+                }, 5000);
+            }
+
+            okButton.addEventListener('click', () => {
+                if (isAnimating) return;
+                isAnimating = true;
+                
+                // 1. Fade out button
+                buttonWrapper.style.opacity = '0';
+                
+                // 2. Disable carousel container interaction
+                container.style.cursor = 'default';
+
+                // 3. Animate carousel items
+                items.forEach((item, i) => {
+                    if (i === activeIndex) {
+                        // Center item: Enlarge it
+                        const currentTransform = item.style.transform;
+                        // Adds scale(1.3) to the existing transform
+                        item.style.transform = `${currentTransform} scale(1.3)`; 
+                    } else {
+                        // Other items: Fade them out
+                        item.style.opacity = '0';
+                    }
+                });
+                
+                // 4. Start confetti stream
+                startConfettiStream();
+                
+                // 5. Hide button wrapper completely after fade
+                setTimeout(() => {
+                    buttonWrapper.style.display = 'none';
+                }, 500); 
+            });
+
+
+            // --- 7. Initial Setup ---
+            
+            // Set initial canvas size
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+
+            // Initial Carousel Setup Call
+            wheel.style.transform = `translateZ(-${radius}px) rotateY(0deg)`;
+            updateCarouselStyles();
+        });
+    </script>
+
+</body>
+</html>
